@@ -1,0 +1,26 @@
+# Python virtual environment
+env/
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# VS Code settings (if using)
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# dotenv secrets
+.env
+
+# Jupyter Notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# Streamlit cache
+.streamlit/
+
+# Log files
+*.log
