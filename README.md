@@ -52,6 +52,7 @@ ai-interview-coach/
 
 \`\`\`bash
 git clone https://github.com/YOUR_USERNAME/ai-interview-coach.git
+
 cd ai-interview-coach
 \`\`\`
 
@@ -59,6 +60,7 @@ cd ai-interview-coach
 
 \`\`\`bash
 python -m venv env
+
 source env/bin/activate  # or .\env\Scripts\activate (Windows)
 \`\`\`
 
