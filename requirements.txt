@@ -4,3 +4,4 @@ streamlit
 openai
 azure-cognitiveservices-speech
 python-dotenv
+requests

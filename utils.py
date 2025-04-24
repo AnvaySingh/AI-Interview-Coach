@@ -1,40 +1,64 @@
 import os
-from openai import AzureOpenAI
-
-client = AzureOpenAI(azure_endpoint=os.getenv("OPENAI_ENDPOINT"),
-api_version="2023-03-15-preview",
-api_key=os.getenv("OPENAI_API_KEY"))
 from dotenv import load_dotenv
+from openai import AzureOpenAI
 import azure.cognitiveservices.speech as speechsdk
 
+# Load environment variables
 load_dotenv()
 
+# Azure OpenAI client
+client = AzureOpenAI(
+    azure_endpoint=os.getenv("OPENAI_ENDPOINT"),
+    api_version="2023-03-15-preview",
+    api_key=os.getenv("OPENAI_API_KEY")
+)
 
-# GPT-4 prompt and completion
+# 🔍 Load external prompt template
+def load_prompt_template():
+    try:
+        with open("prompt_templates/interview_followup.txt", "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return "Candidate's Role: {job_role}\nCandidate's Answer: {candidate_input}\n\nGive follow-up question and feedback."
 
+# 🤖 GPT-4: Candidate coaching
 def analyze_answer(candidate_input, job_role="software engineer"):
-    system_prompt = f"You are an experienced recruiter interviewing for a {job_role} role."
-    user_prompt = f"The candidate responded with:\n{candidate_input}\n\nNow give a follow-up question, sentiment, tone, and coaching tip."
+    prompt_template = load_prompt_template()
+    full_prompt = prompt_template.format(
+        job_role=job_role,
+        candidate_input=candidate_input
+    )
 
-    response = client.chat.completions.create(model=os.getenv("OPENAI_DEPLOYMENT"),
-    messages=[
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
-    ])
-    return response.choices[0].message.content
+    response = client.chat.completions.create(
+        model=os.getenv("OPENAI_DEPLOYMENT"),
+        messages=[
+            {"role": "system", "content": "You are a professional interview coach."},
+            {"role": "user", "content": full_prompt}
+        ]
+    )
 
-# Azure Speech-to-Text
+    return response.choices[0].message.content.strip()
 
+# 🎤 Azure Speech-to-Text
 def transcribe_audio():
-    speech_config = speechsdk.SpeechConfig(
-        subscription=os.getenv("SPEECH_KEY"),
-        region=os.getenv("SPEECH_REGION")
-    )
-    audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
-    recognizer = speechsdk.SpeechRecognizer(
-        speech_config=speech_config,
-        audio_config=audio_config
-    )
-    print("Speak now...")
-    result = recognizer.recognize_once()
-    return result.text
+    try:
+        speech_config = speechsdk.SpeechConfig(
+            subscription=os.getenv("SPEECH_KEY"),
+            region=os.getenv("SPEECH_REGION")
+        )
+        audio_config = speechsdk.AudioConfig(use_default_microphone=True)
+        recognizer = speechsdk.SpeechRecognizer(
+            speech_config=speech_config,
+            audio_config=audio_config
+        )
+
+        print("🎙️ Speak now...")
+        result = recognizer.recognize_once()
+
+        if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            return result.text
+        else:
+            return "Sorry, I couldn't understand you. Please try again."
+
+    except Exception as e:
+        return f"Speech recognition error: {str(e)}"
