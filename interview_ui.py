@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # ✅ Set this to your deployed API base
-API_BASE = "https://aiinterviewcoach-backend.azurewebsites.net"
+API_BASE = "https://aiinterviewcoach-api.azurewebsites.net"
 
 st.title("🎤 AI Interview Coach")
 st.markdown("Answer an interview question and get feedback + a follow-up question.")
