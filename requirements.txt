@@ -6,3 +6,4 @@ azure-cognitiveservices-speech
 python-dotenv
 requests
 python-multipart
+streamlit-audiorec   # <-- Add this line
