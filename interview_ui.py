@@ -15,7 +15,6 @@ job = st.selectbox("💼 Choose a Job Role:", ["software engineer", "product man
 if use_voice:
     st.info("Click 'Start Recording', answer, then click 'Stop'.")
     audio_bytes = st_audiorec()
-    st.write(type(audio_bytes))
     if audio_bytes is not None:
         st.audio(audio_bytes, format="audio/wav")
         if st.button("Transcribe My Answer"):
