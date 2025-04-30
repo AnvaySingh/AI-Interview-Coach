@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 from st_audiorec import st_audiorec  # <-- Add this import
 
-# API_BASE = "https://aiinterviewcoach-api.azurewebsites.net"
-API_BASE = "http://localhost:8000"
+API_BASE = "https://aiinterviewcoach-api.azurewebsites.net"
+# API_BASE = "http://localhost:8000"
 
 st.title("🎤 AI Interview Coach")
 st.markdown("Answer an interview question and get feedback + a follow-up question.")
@@ -15,6 +15,7 @@ job = st.selectbox("💼 Choose a Job Role:", ["software engineer", "product man
 if use_voice:
     st.info("Click 'Start Recording', answer, then click 'Stop'.")
     audio_bytes = st_audiorec()
+    st.write(type(audio_bytes))
     if audio_bytes is not None:
         st.audio(audio_bytes, format="audio/wav")
         if st.button("Transcribe My Answer"):
@@ -28,6 +29,7 @@ if use_voice:
                         st.text_area("🎤 Transcribed Answer:", value=input_text, height=150, key="voice_input")
                     else:
                         st.error("Transcription error.")
+                        st.write("Raw response:", response.text)
                 except Exception as e:
                     st.error(f"Error calling backend: {e}")
 else:
