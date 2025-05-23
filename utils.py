@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 import azure.cognitiveservices.speech as speechsdk
+import tempfile
 
 # Load environment variables
 load_dotenv()
@@ -62,3 +63,26 @@ def transcribe_audio():
 
     except Exception as e:
         return f"Speech recognition error: {str(e)}"
+
+def transcribe_audio_file(audio_bytes):
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+        tmp.write(audio_bytes)
+        tmp_path = tmp.name
+
+    try:
+        speech_config = speechsdk.SpeechConfig(
+            subscription=os.getenv("SPEECH_KEY"),
+            region=os.getenv("SPEECH_REGION")
+        )
+        audio_config = speechsdk.AudioConfig(filename=tmp_path)
+        recognizer = speechsdk.SpeechRecognizer(
+            speech_config=speech_config,
+            audio_config=audio_config
+        )
+        result = recognizer.recognize_once()
+        if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            return result.text
+        else:
+            return "Sorry, I couldn't understand the audio."
+    finally:
+        os.remove(tmp_path)

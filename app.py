@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from utils import analyze_answer, transcribe_audio
+from fastapi import FastAPI, File, UploadFile
+from utils import analyze_answer, transcribe_audio_file
 
 app = FastAPI()
 
@@ -11,6 +11,8 @@ def root():
 def get_followup(candidate_input: str, job_role: str = "software engineer"):
     return {"response": analyze_answer(candidate_input, job_role)}
 
-@app.get("/transcribe")
-def speech_to_text():
-    return {"transcript": transcribe_audio()}
+@app.post("/transcribe")
+async def transcribe(file: UploadFile = File(...)):
+    audio_bytes = await file.read()
+    transcript = transcribe_audio_file(audio_bytes)
+    return {"transcript": transcript}

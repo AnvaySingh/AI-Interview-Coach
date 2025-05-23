@@ -1,5 +1,7 @@
 import streamlit as st
 import requests
+from st_audiorec import st_audiorec  
+
 import os
 from dotenv import load_dotenv
 
@@ -17,18 +19,24 @@ input_text = ""
 job = st.selectbox("💼 Choose a Job Role:", ["software engineer", "product manager", "data analyst"])
 
 if use_voice:
-    if st.button("🎧 Record My Answer"):
-        with st.spinner("Listening and transcribing..."):
-            try:
-                response = requests.get(f"{API_BASE}/transcribe")
-                if response.status_code == 200:
-                    input_text = response.json()["transcript"]
-                    st.session_state["input_text"] = input_text
-                    st.text_area("🎤 Transcribed Answer:", value=input_text, height=150, key="voice_input")
-                else:
-                    st.error("Microphone or transcription error.")
-            except Exception as e:
-                st.error(f"Error calling backend: {e}")
+    st.info("Click 'Start Recording', answer, then click 'Stop'.")
+    audio_bytes = st_audiorec()
+    if audio_bytes is not None:
+        st.audio(audio_bytes, format="audio/wav")
+        if st.button("Transcribe My Answer"):
+            with st.spinner("Transcribing..."):
+                files = {"file": ("audio.wav", audio_bytes, "audio/wav")}
+                try:
+                    response = requests.post(f"{API_BASE}/transcribe", files=files)
+                    if response.status_code == 200:
+                        input_text = response.json()["transcript"]
+                        st.session_state["input_text"] = input_text
+                        st.text_area("🎤 Transcribed Answer:", value=input_text, height=150, key="voice_input")
+                    else:
+                        st.error("Transcription error.")
+                        st.write("Raw response:", response.text)
+                except Exception as e:
+                    st.error(f"Error calling backend: {e}")
 else:
     input_text = st.text_area("🗣️ Your Interview Answer:", key="text_input")
     st.session_state["input_text"] = input_text
