@@ -115,14 +115,6 @@ streamlit run interview_ui.py
 - **Streamlit**
 - **Python 3.9+**
 
----
-
-## 🔄 Future Enhancements
-
-- Upload & parse resumes for custom coaching  
-- Real-time feedback with WebSockets  
-- Save sessions to Azure CosmosDB or Blob  
-- Deploy on Azure App Service  
 
 
 ---
