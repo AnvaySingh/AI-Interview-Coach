@@ -1,9 +1,15 @@
 import streamlit as st
 import requests
-from st_audiorec import st_audiorec  # <-- Add this import
+from st_audiorec import st_audiorec  
 
-API_BASE = "https://aiinterviewcoach-api.azurewebsites.net"
-# API_BASE = "http://localhost:8000"
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get API base URL from environment variable, fallback to localhost for development
+API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 st.title("🎤 AI Interview Coach")
 st.markdown("Answer an interview question and get feedback + a follow-up question.")
