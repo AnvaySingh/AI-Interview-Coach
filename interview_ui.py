@@ -9,9 +9,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get API base URL from environment variable, fallback to localhost for development
-# API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
-
-API_BASE= "https://aiinterviewcoach-api.azurewebsites.net/"
+API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
+st.sidebar.text(f"Current API: {API_BASE}")  # Debug line to show what API URL is being used
 
 st.title("🎤 AI Interview Coach")
 st.markdown("Answer an interview question and get feedback + a follow-up question.")
