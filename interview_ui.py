@@ -9,7 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get API base URL from environment variable, fallback to localhost for development
-API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
+# API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
+
+API_BASE= os.getenv("API_BASE_URL", "https://interview-coach-api.azurewebsites.net")
 
 st.title("🎤 AI Interview Coach")
 st.markdown("Answer an interview question and get feedback + a follow-up question.")
@@ -56,5 +58,5 @@ if st.button("Analyze My Answer") and st.session_state.get("input_text"):
                 st.error("Something went wrong with the backend.")
         except Exception as e:
             st.error(f"Error contacting backend: {e}")
-            
+
 
